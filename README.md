@@ -32,12 +32,12 @@ Installation instructions
 1. git clone https://github.com/DemandCube/github-reporter.git    
 2. cd github-reporter    
 3. vi viper.properties    
-...edit the sender's email address.    
-...if the report is to be sent to a single address (as during testing)  provide the 'to' property.    
+    edit the sender's email address.    
+    if the report is to be sent to a single address (as during testing)  provide the 'to' property.    
 4. gradle run -DgmailUsername=xxxx -DgmailPassword=xxxx -DgithubUser=xxxx  -DgithubPassword=xxxx
 ```
 
-The report will be sent in xls format to all members of the team or to the individual address provided in step 2.
+The report will be sent in .xls format to all members of the team or to the individual address provided in step 3.
 
 Dependencies.
 ===
