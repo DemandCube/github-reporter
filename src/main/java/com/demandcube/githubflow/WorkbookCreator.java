@@ -558,21 +558,20 @@ public class WorkbookCreator {
 	private static final class ClosedByNameFunction implements
 			Function<GHIssue, String> {
 		public String apply(GHIssue issue) {
-			/*
-			 * logger.debug("Issue " + issue.getTitle());
-			 * logger.debug("Issue number " + issue.getNumber());
-			 * logger.debug("Issue repo " + issue.getRepository().getName());
-			 */
+
 			try {
 				if (issue.getClosedBy() != null)
 					return issue.getClosedBy().getName();
 				else {
-					return "unkown";
+					logger.debug("Issue is closed but has no closer. "
+							+ issue.getTitle());
+					return issue.getUser().getName();
 				}
 			} catch (IOException e) {
 				logger.error(e.getMessage(), e);
 			}
-
+			logger.debug("Issue is closed but has no closer "
+					+ issue.getTitle());
 			return "";
 		}
 	}
