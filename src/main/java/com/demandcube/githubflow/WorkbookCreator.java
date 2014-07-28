@@ -564,7 +564,7 @@ public class WorkbookCreator {
 			 * logger.debug("Issue repo " + issue.getRepository().getName());
 			 */
 			try {
-				if (issue.getClosedBy().getName() != null)
+				if (issue.getClosedBy() != null)
 					return issue.getClosedBy().getName();
 				else {
 					return "unkown";
