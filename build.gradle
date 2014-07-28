@@ -4,7 +4,7 @@ apply plugin:'application'
 mainClassName = "com.demandcube.githubflow.Cron"
 repositories {
     mavenCentral()
-	  maven { url 'http://maven-repository.com/' }
+	  maven { url 'http://repo.jenkins-ci.org/public/' }
 }
 dependencies {
     compile group: 'com.google.guava', name: 'guava', version: '17.0'
