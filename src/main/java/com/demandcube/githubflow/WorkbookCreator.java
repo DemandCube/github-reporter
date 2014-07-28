@@ -564,7 +564,7 @@ public class WorkbookCreator {
 					return issue.getClosedBy().getName();
 				else {
 					logger.debug("Issue is closed but has no closer. "
-							+ issue.getTitle());
+							+ issue.getTitle() +"status " +issue.getState());
 					return issue.getUser().getName();
 				}
 			} catch (IOException e) {
