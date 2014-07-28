@@ -1,38 +1,15 @@
 package com.demandcube.githubflow;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-
-import org.apache.log4j.Logger;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.kohsuke.github.GHIssue;
-import org.kohsuke.github.GHPullRequest;
-
-import com.google.common.base.Function;
-import com.google.common.base.Stopwatch;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Multimaps;
-import com.google.common.collect.Sets;
 
 //TODO remove tautology
-public class WorkbookCreator {
+public class WorkbookCreator2 {/*
 
 	private static final Logger logger = Logger
-			.getLogger(WorkbookCreator.class);
-	private List<GHIssue> closedIssues;
-	private List<GHIssue> openedIssues;
-	private List<GHPullRequest> openedPullRequests;
-	private List<GHPullRequest> closedPullRequests;
+			.getLogger(WorkbookCreator2.class);
+	private List<Issue> closedIssues;
+	private List<Issue> openedIssues;
+	private List<PullRequest> openedPullRequests;
+	private List<PullRequest> closedPullRequests;
 	private Collection<String> users;
 	private Date startDate;
 	private Date endDate;
@@ -40,18 +17,18 @@ public class WorkbookCreator {
 	private CellStyle dateStyle;
 	private CellStyle boldStyle;
 
-	public WorkbookCreator(List<GHIssue> openedIssues,
-			List<GHIssue> closedIssues, Date startDate, Date endDate) {
+	public WorkbookCreator2(List<Issue> openedIssues, List<Issue> closedIssues,
+			Date startDate, Date endDate) {
 		this.openedIssues = openedIssues;
 		this.closedIssues = closedIssues;
 		this.startDate = startDate;
 		this.endDate = endDate;
 	}
 
-	public WorkbookCreator(List<GHIssue> openedIssues,
-			List<GHIssue> closedIssues, List<GHPullRequest> openedPullRequests,
-			List<GHPullRequest> closedPullRequests, Date startDate,
-			Date endDate, Collection<String> users) {
+	public WorkbookCreator2(List<Issue> openedIssues, List<Issue> closedIssues,
+			List<PullRequest> openedPullRequests,
+			List<PullRequest> closedPullRequests, Date startDate, Date endDate,
+			Collection<String> users) {
 		this.openedIssues = openedIssues;
 		this.closedIssues = closedIssues;
 		this.openedPullRequests = openedPullRequests;
@@ -118,31 +95,31 @@ public class WorkbookCreator {
 
 		logger.debug("just before the exception? --------------->");
 		logger.debug("Opened issues size" + openedIssues.size());
-		ListMultimap<String, GHIssue> openedIssuesByName = Multimaps.index(
-				openedIssues, new OpenedByNameFunction());
-		ListMultimap<String, GHIssue> closedIssuesByName = Multimaps.index(
+		ListMultimap<String, Issue> openedIssuesByName = Multimaps.index(
+				openedIssues, new OpenedByNameFunction<Issue>());
+		ListMultimap<String, Issue> closedIssuesByName = Multimaps.index(
 				closedIssues, new ClosedByNameFunction());
 
-		ListMultimap<String, GHPullRequest> openedPullRequestsByName = Multimaps
-				.index(openedPullRequests, new OpenedByNameFunction());
-		ListMultimap<String, GHPullRequest> closedRequestsByName = Multimaps
+		ListMultimap<String, PullRequest> openedPullRequestsByName = Multimaps
+				.index(openedPullRequests, new OpenedByNameFunction<PullRequest>());
+		ListMultimap<String, PullRequest> closedRequestsByName = Multimaps
 				.index(closedPullRequests, new ClosedByNameFunction());
 
-		ListMultimap<String, GHIssue> openedIssuesByRepo = Multimaps.index(
-				openedIssues, new RepoFunction<GHIssue>());
-		ListMultimap<String, GHIssue> closedIssuesByRepo = Multimaps.index(
-				closedIssues, new RepoFunction<GHIssue>());
-		ListMultimap<String, GHPullRequest> openedPullRequestsByRepo = Multimaps
-				.index(openedPullRequests, new RepoFunction<GHPullRequest>());
-		ListMultimap<String, GHPullRequest> closedPullRequestsByRepo = Multimaps
-				.index(closedPullRequests, new RepoFunction<GHPullRequest>());
+		ListMultimap<String, Issue> openedIssuesByRepo = Multimaps.index(
+				openedIssues, new RepoFunction<Issue>());
+		ListMultimap<String, Issue> closedIssuesByRepo = Multimaps.index(
+				closedIssues, new RepoFunction<Issue>());
+		ListMultimap<String, PullRequest> openedPullRequestsByRepo = Multimaps
+				.index(openedPullRequests, new RepoFunction<PullRequest>());
+		ListMultimap<String, PullRequest> closedPullRequestsByRepo = Multimaps
+				.index(closedPullRequests, new RepoFunction<PullRequest>());
 
 		Set<String> repos = Sets.newHashSet(Iterables.transform(
 				Iterables.concat(openedIssues, closedIssues),
-				new RepoFunction<GHIssue>()));
+				new RepoFunction<Issue>()));
 		Set<String> repos2 = Sets.newHashSet(Iterables.transform(
 				Iterables.concat(openedPullRequests, closedPullRequests),
-				new RepoFunction<GHPullRequest>()));
+				new RepoFunction<PullRequest>()));
 
 		row = sheet.createRow((short) 6);
 		row.createCell(0).setCellValue("Team Summary:");
@@ -222,7 +199,7 @@ public class WorkbookCreator {
 	private XSSFSheet createOpenedPullRequestSheet(CreationHelper createHelper,
 			XSSFSheet sheet) throws IOException {
 		XSSFRow row;
-		GHPullRequest pullRequest;
+		PullRequest pullRequest;
 		row = sheet.createRow((short) 0);
 		row.createCell(0).setCellValue(
 				createHelper.createRichTextString("Pull Request No."));
@@ -301,7 +278,7 @@ public class WorkbookCreator {
 	private XSSFSheet createClosedPullRequestSheet(CreationHelper createHelper,
 			XSSFSheet sheet) throws IOException {
 		XSSFRow row;
-		GHPullRequest pullRequest;
+		PullRequest pullRequest;
 		row = sheet.createRow((short) 0);
 		row.createCell(0).setCellValue(
 				createHelper.createRichTextString("Pull Request No."));
@@ -344,7 +321,7 @@ public class WorkbookCreator {
 			if (pullRequest.getIssueUrl() != null)
 				row.createCell(6).setCellValue(
 						createHelper.createRichTextString(pullRequest
-								.getIssueUrl().toExternalForm()));
+								.getIssueUrl()));
 			if (pullRequest.getAssignee() != null) {
 				row.createCell(7).setCellValue(
 						createHelper.createRichTextString(pullRequest
@@ -384,16 +361,16 @@ public class WorkbookCreator {
 		return sheet;
 	}
 
-	/**
+	*//**
 	 * @param createHelper
 	 * @param sheet
 	 * @return
 	 * @throws IOException
-	 */
+	 *//*
 	private XSSFSheet createOpenedIssueSheet(CreationHelper createHelper,
 			XSSFSheet sheet) throws IOException {
 		XSSFRow row;
-		GHIssue issue;
+		Issue issue;
 		row = sheet.createRow((short) 0);
 		row.createCell(0).setCellValue(
 				createHelper.createRichTextString("Issue No."));
@@ -456,16 +433,16 @@ public class WorkbookCreator {
 		return sheet;
 	}
 
-	/**
+	*//**
 	 * @param createHelper
 	 * @param sheet
 	 * @return
 	 * @throws IOException
-	 */
+	 *//*
 	private XSSFSheet createClosedIssueSheet(CreationHelper createHelper,
 			XSSFSheet sheet) throws IOException {
 		XSSFRow row;
-		GHIssue issue;
+		Issue issue;
 		row = sheet.createRow((short) 0);
 		row.createCell(0).setCellValue(
 				createHelper.createRichTextString("Issue No."));
@@ -533,39 +510,16 @@ public class WorkbookCreator {
 		return sheet;
 	}
 
-	private static final class OpenedByNameFunction implements
-			Function<GHIssue, String> {
-		public String apply(GHIssue issue) {
-			/*
-			 * logger.debug("Issue " + issue.getTitle());
-			 * logger.debug("Issue number " + issue.getNumber());
-			 * logger.debug("Issue repo " + issue.getRepository().getName());
-			 */
-			try {
-				if (issue.getUser().getName() != null)
-					return issue.getUser().getName();
-				else {
-					return "unkown";
-				}
-			} catch (IOException e) {
-				logger.error(e.getMessage(), e);
-			}
-
-			return "";
-		}
-	}
-
 	private static final class ClosedByNameFunction implements
-			Function<GHIssue, String> {
-		public String apply(GHIssue issue) {
+			Function<Issue, String> {
+		public String apply(Issue issue) {
 
 			try {
-				
-				if (issue.getRepository().getIssue(issue.getNumber()).getClosedBy() != null)
-					return issue.getRepository().getIssue(issue.getNumber()).getClosedBy().getName();
+				if (issue.getClosedBy() != null)
+					return issue.getClosedBy().getName();
 				else {
 					logger.debug("Issue is closed but has no closer. "
-							+ issue.getTitle() +"status " +issue.getState());
+							+ issue.getTitle() + "status " + issue.getState());
 					return issue.getUser().getName();
 				}
 			} catch (IOException e) {
@@ -580,12 +534,12 @@ public class WorkbookCreator {
 	private static final class RepoFunction<T> implements Function<T, String> {
 		public String apply(T t) {
 			String name = "";
-			if (t instanceof GHIssue) {
-				GHIssue issue = (GHIssue) t;
+			if (t instanceof Issue) {
+				Issue issue = (Issue) t;
 				name = issue.getRepository().getName();
 			}
-			if (t instanceof GHPullRequest) {
-				GHPullRequest pullRequest = (GHPullRequest) t;
+			if (t instanceof PullRequest) {
+				PullRequest pullRequest = (PullRequest) t;
 				name = pullRequest.getRepository().getName();
 			}
 
@@ -593,4 +547,25 @@ public class WorkbookCreator {
 
 		}
 	}
-}
+
+	private static final class OpenedByNameFunction<T> implements
+			Function<T, String> {
+		public String apply(T t) {
+			if (t instanceof Issue) {
+				Issue issue = (Issue) t;
+				if (issue.getUser().getName() != null) {
+					return issue.getUser().getName();
+				}
+			}if (t instanceof PullRequest) {
+				PullRequest issue = (PullRequest) t;
+				if (issue.getUser().getName() != null) {
+					return issue.getUser().getName();
+				}
+			}
+			else {
+				return "unkown";
+			}
+			return "";
+		}
+	}
+*/}
