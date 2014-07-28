@@ -119,14 +119,14 @@ public class WorkbookCreator {
 		logger.debug("just before the exception? --------------->");
 		logger.debug("Opened issues size" + openedIssues.size());
 		ListMultimap<String, GHIssue> openedIssuesByName = Multimaps.index(
-				openedIssues, new NameFunction());
+				openedIssues, new OpenedByNameFunction());
 		ListMultimap<String, GHIssue> closedIssuesByName = Multimaps.index(
-				closedIssues, new NameFunction());
+				closedIssues, new ClosedByNameFunction());
 
 		ListMultimap<String, GHPullRequest> openedPullRequestsByName = Multimaps
-				.index(openedPullRequests, new NameFunction());
+				.index(openedPullRequests, new OpenedByNameFunction());
 		ListMultimap<String, GHPullRequest> closedRequestsByName = Multimaps
-				.index(closedPullRequests, new NameFunction());
+				.index(closedPullRequests, new ClosedByNameFunction());
 
 		ListMultimap<String, GHIssue> openedIssuesByRepo = Multimaps.index(
 				openedIssues, new RepoFunction<GHIssue>());
@@ -533,7 +533,7 @@ public class WorkbookCreator {
 		return sheet;
 	}
 
-	private static final class NameFunction implements
+	private static final class OpenedByNameFunction implements
 			Function<GHIssue, String> {
 		public String apply(GHIssue issue) {
 			/*
@@ -544,6 +544,28 @@ public class WorkbookCreator {
 			try {
 				if (issue.getUser().getName() != null)
 					return issue.getUser().getName();
+				else {
+					return "unkown";
+				}
+			} catch (IOException e) {
+				logger.error(e.getMessage(), e);
+			}
+
+			return "";
+		}
+	}
+
+	private static final class ClosedByNameFunction implements
+			Function<GHIssue, String> {
+		public String apply(GHIssue issue) {
+			/*
+			 * logger.debug("Issue " + issue.getTitle());
+			 * logger.debug("Issue number " + issue.getNumber());
+			 * logger.debug("Issue repo " + issue.getRepository().getName());
+			 */
+			try {
+				if (issue.getClosedBy().getName() != null)
+					return issue.getClosedBy().getName();
 				else {
 					return "unkown";
 				}
